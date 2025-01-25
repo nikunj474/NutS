@@ -1,0 +1,73 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Upload and Text Extraction</title>
+</head>
+<body>
+    <h1>Upload an Image</h1>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if item_quantity %}
+        <h2>Extracted Items and Quantities:</h2>
+        <ul>
+            {% for item, quantity in item_quantity.items() %}
+                <li>{{ item }}: {{ quantity }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt OCR</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>OCR Receipt Processing</h1>
+        
+        <!-- Form for uploading the image -->
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="image">Upload Receipt Image:</label>
+                <input type="file" class="form-control" id="image" name="image" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+
+        <hr>
+
+        {% if item_quantity %}
+        <h3>Extracted Items:</h3>
+        <ul>
+            {% for item, quantity in item_quantity.items() %}
+                <li>{{ item }} - {{ quantity }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if newds %}
+        <h3>Filtered Dataset:</h3>
+        {{ newds|safe }}
+
+        <h3>Total Nutritional Values:</h3>
+        <ul>
+            {% for value in totallist %}
+                <li>{{ value }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+</body>
+</html>
+
+
+
