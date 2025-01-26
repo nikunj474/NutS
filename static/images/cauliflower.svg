@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- Cauliflower Body -->
+    <circle cx="50" cy="50" r="35" fill="#F5F5F5"/>
+    <circle cx="35" cy="35" r="15" fill="#FFFFFF"/>
+    <circle cx="65" cy="35" r="15" fill="#FFFFFF"/>
+    <circle cx="50" cy="25" r="15" fill="#FFFFFF"/>
+    <circle cx="35" cy="60" r="15" fill="#FFFFFF"/>
+    <circle cx="65" cy="60" r="15" fill="#FFFFFF"/>
+    
+    <!-- Stem -->
+    <rect x="45" y="70" width="10" height="15" fill="#90A959"/>
+    
+    <!-- Eyes -->
+    <circle cx="40" cy="45" r="4" fill="#E6E6E6"/>
+    <circle cx="60" cy="45" r="4" fill="#E6E6E6"/>
+    <circle cx="40" cy="45" r="2" fill="#333333"/>
+    <circle cx="60" cy="45" r="2" fill="#333333"/>
+    
+    <!-- Rosy Cheeks -->
+    <circle cx="35" cy="50" r="3" fill="#FFB3B3" opacity="0.6"/>
+    <circle cx="65" cy="50" r="3" fill="#FFB3B3" opacity="0.6"/>
+    
+    <!-- Smile -->
+    <path d="M40,55 Q50,62 60,55" fill="none" stroke="#CCCCCC" stroke-width="2" stroke-linecap="round"/>
+    
+    <!-- Bicycle -->
+    <circle cx="30" cy="85" r="10" fill="none" stroke="#90A959" stroke-width="3"/>
+    <circle cx="70" cy="85" r="10" fill="none" stroke="#90A959" stroke-width="3"/>
+    <line x1="30" y1="85" x2="70" y2="85" stroke="#90A959" stroke-width="3"/>
+</svg> 

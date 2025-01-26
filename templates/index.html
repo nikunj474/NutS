@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUTS - Nutrition Tracking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #2C5530;
+            --secondary: #86B049;
+            --accent: #FF5858;
+            --bg: #B8D5B8;
+            --text: #2D4059;
+            --road-color: rgba(44, 85, 48, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            position: relative;
+        }
+
+        .nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .nav a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 1.2em;
+            margin: 0 15px;
+            transition: all 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: var(--secondary);
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 100px 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .hero {
+            background: transparent;
+            backdrop-filter: none;
+            padding-top: 50px;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .logo-image {
+            width: 400px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 10px 20px rgba(44, 85, 48, 0.1));
+        }
+
+        .hero-title {
+            font-size: 8em;
+            color: white;
+            position: relative;
+            margin-bottom: 0;
+            letter-spacing: 2px;
+        }
+
+        .leaf {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            fill: #2C5530;
+        }
+
+        .subtitle {
+            font-size: 1.8em;
+            color: #2C5530;
+            font-weight: 400;
+            letter-spacing: 2px;
+            margin-top: 0;
+        }
+
+        .tm {
+            font-size: 0.4em;
+            vertical-align: super;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(44, 85, 48, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 2px solid rgba(44, 85, 48, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(44, 85, 48, 0.15);
+            border-color: rgba(44, 85, 48, 0.2);
+        }
+
+        .input-form {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(44, 85, 48, 0.1);
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            border: 2px solid rgba(44, 85, 48, 0.1);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .fun-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Fredoka', sans-serif;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .fun-button:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .food-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .food-item {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+            border: 1px solid rgba(44, 85, 48, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .section-title {
+            font-size: 3em;
+            color: var(--primary);
+            margin-bottom: 50px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(44, 85, 48, 0.1);
+        }
+
+        #manualEntry {
+            display: none;
+        }
+
+        #uploadForm {
+            display: none;
+        }
+
+        /* Cycling parade styles */
+        .cycling-parade {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .cycling-road {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(
+                to bottom,
+                var(--road-color),
+                rgba(57, 91, 100, 0.3)
+            );
+        }
+
+        .cycling-road::after {
+            content: '';
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            height: 4px;
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.8) 0,
+                rgba(255, 255, 255, 0.8) 50px,
+                transparent 50px,
+                transparent 100px
+            );
+            animation: moveRoad 15s linear infinite;
+        }
+
+        .cyclist {
+            position: absolute;
+            bottom: 20px;
+            width: 80px;
+            height: 80px;
+            animation: cycle 20s linear infinite;
+        }
+
+        .cyclist img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transform-origin: bottom center;
+            animation: bounce 0.6s ease-in-out infinite;
+        }
+
+        .cyclist::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 10px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 50%;
+            filter: blur(3px);
+        }
+
+        .cyclist.broccoli { animation-delay: 0s; }
+        .cyclist.carrot { animation-delay: -4s; }
+        .cyclist.cauliflower { animation-delay: -8s; }
+        .cyclist.dog { animation-delay: -12s; }
+        .cyclist.cat { animation-delay: -16s; }
+
+        @keyframes cycle {
+            from { transform: translateX(-100px); }
+            to { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(2deg); }
+        }
+
+        @keyframes moveRoad {
+            from { background-position: 0 0; }
+            to { background-position: -200px 0; }
+        }
+
+        /* Add these new styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .height-group .height-inputs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .height-group .height-inputs .input-field {
+            flex: 1;
+        }
+
+        .nutrition-results {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            margin-top: 30px;
+            border: 2px solid rgba(44, 85, 48, 0.1);
+            box-shadow: 0 10px 20px rgba(44, 85, 48, 0.1);
+        }
+
+        .nutrition-results.visible {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .nutrition-results h3:first-child {
+            font-size: 1.4em;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .nutrition-results .result-item {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 1px solid rgba(44, 85, 48, 0.1);
+        }
+
+        .daily-title {
+            color: var(--primary);
+            margin: 30px 0 15px 0;
+            font-size: 1.2em;
+        }
+
+        .result-item.daily {
+            background: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .calculation-method {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .calculation-method p {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .calculation-method ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .calculation-method li {
+            color: var(--text);
+            margin-bottom: 5px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .calculation-method li:before {
+            content: '•';
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+        }
+
+        /* Add these new styles */
+        .upload-area {
+            border: 2px dashed var(--primary);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: var(--secondary);
+        }
+
+        .upload-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .upload-status.success {
+            background: rgba(134, 200, 188, 0.2);
+            color: var(--primary);
+            display: block;
+        }
+
+        .upload-status.error {
+            background: rgba(255, 88, 88, 0.2);
+            color: var(--accent);
+            display: block;
+        }
+
+        /* Add pattern background */
+        .pattern-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(
+                    to bottom,
+                    rgba(184, 213, 184, 0.95),
+                    rgba(184, 213, 184, 0.8)
+                ),
+                url("{{ url_for('static', filename='images/pattern.svg') }}") repeat;
+            background-size: 400px;
+            opacity: 0.15;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .error-message {
+            background: rgba(255, 88, 88, 0.1);
+            border: 1px solid var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .error-message p {
+            color: var(--accent);
+            margin: 5px 0;
+        }
+
+        .error-message p:first-child {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="#home">HOME</a>
+        <a href="#goals">GOALS</a>
+        <a href="#track">TRACK</a>
+        <a href="#results">RESULTS</a>
+    </nav>
+
+    <div class="pattern-bg"></div>
+
+    <section id="home" class="hero section">
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/brand/logo.png') }}" alt="NUTS - Nutrition Simplified" class="logo-image">
+        </div>
+    </section>
+
+    <section id="goals" class="section">
+        <h2 class="section-title">Set Your Goals!</h2>
+        <div class="input-form">
+            <div class="form-group">
+                <label for="sex">Sex</label>
+                <select class="input-field" id="sex" required>
+                    <option value="">Select Sex</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age (years)</label>
+                <input type="number" class="input-field" id="age" min="0" max="150" placeholder="Enter your age" required>
+            </div>
+
+            <div class="form-group height-group">
+                <label>Height</label>
+                <div class="height-inputs">
+                    <input type="number" class="input-field" id="heightFeet" min="0" max="8" placeholder="Feet" required>
+                    <input type="number" class="input-field" id="heightInches" min="0" max="11" placeholder="Inches" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="weight">Weight (pounds)</label>
+                <input type="number" class="input-field" id="weight" min="0" placeholder="Enter your weight" required>
+            </div>
+
+            <div class="form-group">
+                <label for="activityLevel">Activity Level</label>
+                <select class="input-field" id="activityLevel" required>
+                    <option value="">Select Activity Level</option>
+                    <option value="sedentary">Inactive</option>
+                    <option value="low">Low Active</option>
+                    <option value="active">Active</option>
+                    <option value="very">Very Active</option>
+                </select>
+            </div>
+
+            <button class="fun-button" onclick="calculateAndSaveGoals()">Calculate My Goals!</button>
+
+            <div id="nutritionResults" class="nutrition-results">
+                <!-- Results will be displayed here -->
+            </div>
+        </div>
+    </section>
+
+    <section id="track" class="section">
+        <h2 class="section-title">Track Your Food!</h2>
+        <div class="card-container">
+            <div class="card" onclick="showUploadForm()">
+                <h3>Upload Receipt</h3>
+                <p>Let me scan your grocery receipt and analyze your purchased items! I'll help you track your nutrition. 📝</p>
+            </div>
+            <div class="card" onclick="showManualEntry()">
+                <h3>Manual Entry</h3>
+                <p>Type in your foods, I'll help you track! 🥕</p>
+            </div>
+        </div>
+
+        <div class="input-form" id="manualEntry">
+            <input type="text" class="input-field" id="foodName" placeholder="Food Name">
+            <input type="number" class="input-field" id="foodQuantity" placeholder="Quantity (in pounds)">
+            <button class="fun-button" onclick="addFoodItem()">Add Food</button>
+            <ul class="food-list" id="foodList"></ul>
+            <button class="fun-button" onclick="calculateNutrition()">Calculate!</button>
+        </div>
+
+        <form class="input-form" id="uploadForm" enctype="multipart/form-data">
+            <div class="upload-area">
+                <input type="file" name="image" id="receiptImage" class="input-field" accept="image/*">
+            </div>
+            <button type="button" class="fun-button" onclick="uploadReceipt()">Analyze Receipt!</button>
+            <div id="uploadStatus" class="upload-status"></div>
+        </form>
+    </section>
+
+    <section id="results" class="section">
+        <h2 class="section-title">Your Nutrition Results</h2>
+        <div class="input-form" id="resultsDisplay">
+            <!-- Results will be displayed here -->
+        </div>
+    </section>
+
+    <div class="cycling-parade">
+        <div class="cycling-road"></div>
+        <div class="cyclist broccoli">
+            <img src="{{ url_for('static', filename='images/broccoli.svg') }}" alt="Broccoli on bike">
+        </div>
+        <div class="cyclist carrot">
+            <img src="{{ url_for('static', filename='images/carrot.svg') }}" alt="Carrot on bike">
+        </div>
+        <div class="cyclist cauliflower">
+            <img src="{{ url_for('static', filename='images/cauliflower.svg') }}" alt="Cauliflower on bike">
+        </div>
+        <div class="cyclist dog">
+            <img src="{{ url_for('static', filename='images/dog.svg') }}" alt="Dog on bike">
+        </div>
+        <div class="cyclist cat">
+            <img src="{{ url_for('static', filename='images/cat.svg') }}" alt="Cat on bike">
+        </div>
+    </div>
+
+    <script>
+        let carbGoal = 0, proteinGoal = 0, fatGoal = 0, fiberGoal = 0;
+        let foodItems = [];
+
+        // Form handling
+        function showUploadForm() {
+            document.getElementById('manualEntry').style.display = 'none';
+            document.getElementById('uploadForm').style.display = 'block';
+        }
+
+        function showManualEntry() {
+            document.getElementById('uploadForm').style.display = 'none';
+            document.getElementById('manualEntry').style.display = 'block';
+        }
+
+        function addFoodItem() {
+            const nameInput = document.getElementById('foodName');
+            const quantityInput = document.getElementById('foodQuantity');
+            const name = nameInput.value.trim();
+            const quantity = parseInt(quantityInput.value);
+            
+            if (name && quantity > 0) {
+                foodItems.push({ name: name.toLowerCase(), quantity });
+                updateFoodList();
+                
+                // Clear inputs
+                nameInput.value = '';
+                quantityInput.value = '';
+                
+                // Mini confetti effect
+                confetti({
+                    particleCount: 50,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            } else {
+                alert('Please enter a valid food name and quantity (greater than 0)');
+            }
+        }
+
+        function updateFoodList() {
+            const list = document.getElementById('foodList');
+            list.innerHTML = '';
+            foodItems.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'food-item';
+                li.innerHTML = `
+                    <span>${item.name} x ${item.quantity}</span>
+                    <button class="fun-button" onclick="removeItem(${index})">X</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function removeItem(index) {
+            foodItems.splice(index, 1);
+            updateFoodList();
+        }
+
+        async function calculateAndSaveGoals() {
+            const sex = document.getElementById('sex').value;
+            const age = document.getElementById('age').value;
+            const heightFeet = document.getElementById('heightFeet').value;
+            const heightInches = document.getElementById('heightInches').value;
+            const weight = document.getElementById('weight').value;
+            const activityLevel = document.getElementById('activityLevel').value;
+
+            if (!sex || !age || !heightFeet || !heightInches || !weight || !activityLevel) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch('/calculate_goals', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        sex,
+                        age: parseInt(age),
+                        height_feet: parseInt(heightFeet),
+                        height_inches: parseInt(heightInches),
+                        weight: parseFloat(weight),
+                        activity_level: activityLevel
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    displayNutritionResults(data.results);
+                    // Save goals globally
+                    carbGoal = data.results.carbohydrates;
+                    proteinGoal = data.results.protein;
+                    fatGoal = data.results.fat;
+                    fiberGoal = data.results.fiber;
+                    
+                    // Trigger confetti
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                } else {
+                    alert('Error calculating nutrition goals');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while calculating goals');
+            }
+        }
+
+        function displayNutritionResults(results) {
+            const resultsDiv = document.getElementById('nutritionResults');
+            resultsDiv.innerHTML = `
+                <h3>Your Weekly Nutrition Goals</h3>
+                <div class="calculation-method">
+                    <p>Goals calculated using the Mifflin-St Jeor Equation and Dietary Guidelines:</p>
+                    <ul>
+                        <li>Base Metabolic Rate (BMR) = (10 × weight in kg) + (6.25 × height in cm) - (5 × age) + sex factor</li>
+                        <li>Sex factor: +5 for males, -161 for females</li>
+                        <li>Weekly calories adjusted based on activity level</li>
+                        <li>Protein: 1.2g per kg of body weight daily</li>
+                        <li>Fat: 25% of total calories</li>
+                        <li>Carbs: Remaining calories after protein and fat</li>
+                        <li>Fiber: 38g daily for men, 25g daily for women (based on Dietary Guidelines)</li>
+                    </ul>
+                </div>
+                <div class="result-item">
+                    <span>Weekly Calories:</span>
+                    <span>${Math.round(results.calories)} kcal</span>
+                </div>
+                <div class="result-item">
+                    <span>Weekly Protein:</span>
+                    <span>${Math.round(results.protein)}g</span>
+                </div>
+                <div class="result-item">
+                    <span>Weekly Carbohydrates:</span>
+                    <span>${Math.round(results.carbohydrates)}g</span>
+                </div>
+                <div class="result-item">
+                    <span>Weekly Fat:</span>
+                    <span>${Math.round(results.fat)}g</span>
+                </div>
+                <div class="result-item">
+                    <span>Weekly Fiber:</span>
+                    <span>${Math.round(results.fiber)}g</span>
+                </div>
+                
+                <h3 class="daily-title">Daily Breakdown</h3>
+                <div class="result-item daily">
+                    <span>Daily Calories:</span>
+                    <span>${Math.round(results.daily_calories)} kcal</span>
+                </div>
+                <div class="result-item daily">
+                    <span>Daily Protein:</span>
+                    <span>${Math.round(results.daily_protein)}g</span>
+                </div>
+                <div class="result-item daily">
+                    <span>Daily Carbohydrates:</span>
+                    <span>${Math.round(results.daily_carbohydrates)}g</span>
+                </div>
+                <div class="result-item daily">
+                    <span>Daily Fat:</span>
+                    <span>${Math.round(results.daily_fat)}g</span>
+                </div>
+                <div class="result-item daily">
+                    <span>Daily Fiber:</span>
+                    <span>${Math.round(results.daily_fiber)}g</span>
+                </div>
+            `;
+            resultsDiv.classList.add('visible');
+
+            // Update global goals to weekly values
+            carbGoal = results.carbohydrates;
+            proteinGoal = results.protein;
+            fatGoal = results.fat;
+            fiberGoal = results.fiber;
+        }
+
+        function calculateNutrition() {
+            if (foodItems.length === 0) {
+                alert('Please add at least one food item');
+                return;
+            }
+
+            const resultsDisplay = document.getElementById('resultsDisplay');
+            resultsDisplay.innerHTML = '<p>Calculating nutrition values...</p>';
+
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    manual_items: foodItems
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    resultsDisplay.innerHTML = `
+                        <h3>Weekly Nutrition Summary</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${Math.min((data.summary.carbohydrates_100g/carbGoal)*100, 100)}%"></div>
+                        </div>
+                        <p>Carbs: ${data.summary.carbohydrates_100g}g / ${carbGoal}g</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${Math.min((data.summary.proteins_100g/proteinGoal)*100, 100)}%"></div>
+                        </div>
+                        <p>Protein: ${data.summary.proteins_100g}g / ${proteinGoal}g</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${Math.min((data.summary.final_fat/fatGoal)*100, 100)}%"></div>
+                        </div>
+                        <p>Fat: ${data.summary.final_fat}g / ${fatGoal}g</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${Math.min((data.summary.fiber_100g/fiberGoal)*100, 100)}%"></div>
+                        </div>
+                        <p>Fiber: ${data.summary.fiber_100g}g / ${fiberGoal}g</p>
+                    `;
+                    
+                    // Scroll to results
+                    document.querySelector('#results').scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Success animation
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                } else {
+                    resultsDisplay.innerHTML = `
+                        <div class="error-message">
+                            <p>⚠️ ${data.error || 'Could not find matching items in our database'}</p>
+                            <p>Please check the food names and try again.</p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultsDisplay.innerHTML = `
+                    <div class="error-message">
+                        <p>⚠️ An error occurred while calculating nutrition values</p>
+                        <p>Please try again later.</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add cycling animation restart
+        document.querySelectorAll('.cyclist').forEach(cyclist => {
+            cyclist.addEventListener('animationend', () => {
+                cyclist.style.animation = 'none';
+                cyclist.offsetHeight; // Trigger reflow
+                cyclist.style.animation = null;
+            });
+        });
+
+        async function uploadReceipt() {
+            const fileInput = document.getElementById('receiptImage');
+            const statusDiv = document.getElementById('uploadStatus');
+            
+            if (!fileInput.files[0]) {
+                statusDiv.textContent = 'Please select a receipt image first';
+                statusDiv.className = 'upload-status error';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
+
+            try {
+                statusDiv.textContent = 'Analyzing your receipt...';
+                statusDiv.className = 'upload-status';
+                
+                const response = await fetch('/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusDiv.textContent = 'Receipt analyzed successfully!';
+                    statusDiv.className = 'upload-status success';
+                    
+                    // Update the results display
+                    document.getElementById('resultsDisplay').innerHTML = `
+                        <h3>Weekly Nutrition Summary</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${Math.min((data.summary.carbohydrates_100g/carbGoal)*100, 100)}%"></div>
+                        </div>
+                        <p>Carbs: ${data.summary.carbohydrates_100g}g / ${carbGoal}g</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${Math.min((data.summary.proteins_100g/proteinGoal)*100, 100)}%"></div>
+                        </div>
+                        <p>Protein: ${data.summary.proteins_100g}g / ${proteinGoal}g</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${Math.min((data.summary.final_fat/fatGoal)*100, 100)}%"></div>
+                        </div>
+                        <p>Fat: ${data.summary.final_fat}g / ${fatGoal}g</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${Math.min((data.summary.fiber_100g/fiberGoal)*100, 100)}%"></div>
+                        </div>
+                        <p>Fiber: ${data.summary.fiber_100g}g / ${fiberGoal}g</p>
+                    `;
+                    
+                    // Trigger success animation
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                    
+                    // Scroll to results
+                    document.querySelector('#results').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    statusDiv.textContent = 'Could not analyze receipt. Please try again.';
+                    statusDiv.className = 'upload-status error';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                statusDiv.textContent = 'An error occurred while analyzing the receipt';
+                statusDiv.className = 'upload-status error';
+            }
+        }
+    </script>
+</body>
+</html> 

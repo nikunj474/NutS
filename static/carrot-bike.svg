@@ -1,0 +1,18 @@
+<svg width="120" height="160" viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">
+    <!-- Bike frame -->
+    <path d="M20 120 L90 120" stroke="#666" stroke-width="4"/>
+    <path d="M40 120 L60 90 L80 120" stroke="#666" stroke-width="4" fill="none"/>
+    
+    <!-- Carrot body -->
+    <path d="M45 40 L75 90 L15 90 Z" fill="#FF7F27"/>
+    <path d="M45 50 C 30 30, 60 30, 45 50" fill="#4CAF50" stroke="#45A049" stroke-width="2"/>
+    
+    <!-- Eyes -->
+    <circle cx="40" cy="65" r="4" fill="white"/>
+    <circle cx="50" cy="65" r="4" fill="white"/>
+    <circle cx="42" cy="65" r="2" fill="black"/>
+    <circle cx="52" cy="65" r="2" fill="black"/>
+    
+    <!-- Smile -->
+    <path d="M40 75 Q45 80 50 75" stroke="white" stroke-width="2" fill="none"/>
+</svg> 

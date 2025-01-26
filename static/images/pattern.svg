@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <pattern id="vegetable-pattern" x="0" y="0" width="400" height="400" patternUnits="userSpaceOnUse">
+            <!-- Vegetables in light green -->
+            <g fill="none" stroke="#86B049" stroke-width="2">
+                <!-- Pumpkin -->
+                <path d="M50,100 C80,60 120,60 150,100 C180,140 180,200 150,240 C120,280 80,280 50,240 C20,200 20,140 50,100 Z"/>
+                
+                <!-- Bell Pepper -->
+                <path d="M200,150 C220,130 240,130 260,150 C280,170 280,200 260,220 C240,240 220,240 200,220 C180,200 180,170 200,150 Z"/>
+                
+                <!-- Broccoli -->
+                <path d="M100,300 C120,280 140,280 160,300 Q180,320 160,340 C140,360 120,360 100,340 Q80,320 100,300 Z"/>
+                
+                <!-- Carrot -->
+                <path d="M300,50 L320,100 Q330,120 320,140 L300,180 Q290,200 280,180 L260,140 Q250,120 260,100 Z"/>
+                
+                <!-- Lettuce -->
+                <path d="M50,350 Q70,330 90,350 Q110,370 90,390 Q70,410 50,390 Q30,370 50,350 Z"/>
+                
+                <!-- Celery -->
+                <path d="M250,300 L270,350 M260,310 L280,360 M240,320 L260,370"/>
+                
+                <!-- Leaves -->
+                <path d="M150,50 Q170,30 190,50 T150,50"/>
+                <path d="M80,200 Q100,180 120,200 T80,200"/>
+                <path d="M220,250 Q240,230 260,250 T220,250"/>
+                
+                <!-- Small decorative leaves -->
+                <path d="M30,30 Q40,20 50,30 T30,30"/>
+                <path d="M350,350 Q360,340 370,350 T350,350"/>
+                <path d="M180,380 Q190,370 200,380 T180,380"/>
+            </g>
+        </pattern>
+    </defs>
+    
+    <!-- Apply pattern to background -->
+    <rect width="100%" height="100%" fill="url(#vegetable-pattern)"/>
+</svg> 
